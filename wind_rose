@@ -1,0 +1,31 @@
+# Modified from https://guangchuangyu.github.io/2020/03/ncov2019-wind-rose/ and Peoples's Daily
+
+dd <- data.frame('name'=factor(paste0('A',1:40),levels = paste0('A',1:40)),'val'=round(1.2^(4:44)))
+
+dd$angle = 1:40 * 360/40
+i = dd$angle > 90 & dd$val > 100
+dd$angle[i] = dd$angle[i] + 180
+dd$vjust = 1
+dd$vjust[i] = 0
+require(ggplot2)
+p = ggplot(dd, aes(name, val, fill=val)) + 
+  geom_col(width=1, color='grey90') + 
+  # geom_col(aes(y=I(5)), width=1, fill='grey90', alpha = .2) +       
+  # geom_col(aes(y=I(3)), width=1, fill='grey90', alpha = .2) +    
+  geom_col(aes(y=I(2)), width=1, fill = "white") +
+  scale_y_log10() + 
+  scale_fill_gradientn(colors=c("darkgreen", "green", "orange", "firebrick","red"), trans="log") + 
+  geom_text(aes(label=paste(name, val, sep="\n"), 
+                y = val *.8, angle=0, vjust=vjust), 
+            data=function(d) d[d$val > mean(d$val),], 
+            size=3, color = "black", fontface="bold")  + 
+  geom_text(aes(label=paste0(val, "\n", name), 
+                y = val * 2, angle=0), 
+            data=function(d) d[d$val < mean(d$val),], 
+            size=3, vjust=0) + 
+  coord_polar(direction=1) + 
+  theme_void() + 
+  theme(legend.position="none")
+
+# ggplotify::as.ggplot(p, scale=1.45, vjust=-.18, hjust=.05)
+plot(p)
