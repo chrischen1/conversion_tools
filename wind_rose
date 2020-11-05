@@ -1,6 +1,6 @@
 # Modified from https://guangchuangyu.github.io/2020/03/ncov2019-wind-rose/ and Peoples's Daily
 
-dd <- data.frame('name'=factor(paste0('A',1:40),levels = paste0('A',1:40)),'val'=round(1.2^(4:44)))
+dd <- data.frame('name'=factor(paste0('A',1:40),levels = paste0('A',1:40)),'val'=round(1.2^(4:43)))
 
 dd$angle = 1:40 * 360/40
 i = dd$angle > 90 & dd$val > 100
