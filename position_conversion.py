@@ -11,7 +11,7 @@ def transform_coordinates(pos):
     uv01 = v01/np.linalg.norm(v01)
     uv02 = v02/np.linalg.norm(v02)
     cos_12 =  np.dot(uv01,uv02)
-    if cos_12 < 1e-6:
+    if np.abs(cos_12) < 1e-6:
         cos_12 = np.sign(cos_12) * 1e-6 #prevent numerical error
 
     v_i = v01/np.linalg.norm(v01)
