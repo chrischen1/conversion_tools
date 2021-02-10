@@ -24,7 +24,8 @@ def transform_coordinates(pos):
                 v_j = uv02 / cos_12 - uv01
                 v_j = v_j / np.linalg.norm(v_j)
                 break
-            raise Exception("The given coordinates are in one line.")
+            if i == pos2.shape[0]:
+                raise Exception("The given coordinates are in one line.")
     else:
         v_j = uv02 / cos_12 - uv01
         v_j = v_j / np.linalg.norm(v_j)
