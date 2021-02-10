@@ -7,28 +7,22 @@ def transform_coordinates(pos):
     for i in range(3):
         pos2[:, i] = pos[:, i] - pos[0, i]
     v01 = pos2[1, :]
-    v02 = pos2[2, :]
-
-    uv01 = v01 / np.linalg.norm(v01)
-    uv02 = v02 / np.linalg.norm(v02)
-    cos_12 = np.dot(uv01, uv02)
     v_i = v01 / np.linalg.norm(v01)
+
+    for i in range(2, pos2.shape[0]):
+        v02 = pos2[i, :]
+        uv02 = v02 / np.linalg.norm(v02)
+        cos_12 = np.dot(v_i, uv02)
+        if 1 - np.abs(cos_12) > 1e-6:
+            break
+        if i == pos2.shape[0]:
+            raise Exception("The given coordinates are in one line.")
     if np.abs(cos_12) < 1e-6:
         v_j = uv02
-    elif 1 - np.abs(cos_12) < 1e-6:
-        for i in range(3, pos2.shape[0]):
-            v02 = pos2[i, :]
-            uv02 = v02 / np.linalg.norm(v02)
-            cos_12 = np.dot(uv01, uv02)
-            if 1 - np.abs(cos_12) > 1e-6:
-                v_j = uv02 / cos_12 - uv01
-                v_j = v_j / np.linalg.norm(v_j)
-                break
-            if i == pos2.shape[0]:
-                raise Exception("The given coordinates are in one line.")
     else:
-        v_j = uv02 / cos_12 - uv01
+        v_j = uv02 / cos_12 - v_i
         v_j = v_j / np.linalg.norm(v_j)
+
     v_k = np.cross(v_i, v_j)
     r = np.zeros((3, 3))
     r[:, 0] = v_i
