@@ -25,7 +25,7 @@ def transform_coordinates(pos):
     r[:,2] = v_k
 
     pos2 = np.dot(np.linalg.pinv(r),pos2.T).T
-    pos2[pos2<1e-6] = 0
+    pos2[np.abs(pos2)<1e-6] = 0
     return pos2
 
 if __name__ == "__main__":
