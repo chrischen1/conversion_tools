@@ -11,6 +11,8 @@ def transform_coordinates(pos):
     uv01 = v01/np.linalg.norm(v01)
     uv02 = v02/np.linalg.norm(v02)
     cos_12 =  np.dot(uv01,uv02)
+    if cos_12 < 1e-6:
+        cos_12 = np.sign(cos_12) * 1e-6 #prevent numerical error
 
     v_i = v01/np.linalg.norm(v01)
     v_j = uv02/cos_12 - uv01
@@ -21,37 +23,16 @@ def transform_coordinates(pos):
     r[:,0] = v_i
     r[:,1] = v_j
     r[:,2] = v_k
-    return np.dot(np.linalg.pinv(r),pos2.T).T
+
+    pos2 = np.dot(np.linalg.pinv(r),pos2.T).T
+    pos2[pos2<1e-6] = 0
+    return pos2
 
 if __name__ == "__main__":
-    from matplotlib import pyplot
-    from mpl_toolkits.mplot3d import Axes3D
-    from pylab import figure
+    from scipy.spatial import distance_matrix
 
     m = np.random.random((4,3))
-    fig = figure()
-    ax = Axes3D(fig)
-
-    for i in range(len(m)):  #plot each point + it's index as text above
-        ax.scatter(m[i,0],m[i,1],m[i,2],color='b')
-        ax.text(m[i,0],m[i,1],m[i,2],'%s' % (str(i)),size=20,zorder=1,
-                color='k')
-
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    pyplot.show()
-
+    print(distance_matrix(m,m))
     m_norm = transform_coordinates(m)
-    fig = figure()
-    ax = Axes3D(fig)
+    print(distance_matrix(m_norm,m_norm))
 
-    for i in range(len(m_norm)):  #plot each point + it's index as text above
-        ax.scatter(m_norm[i,0],m_norm[i,1],m_norm[i,2],color='b')
-        ax.text(m_norm[i,0],m_norm[i,1],m_norm[i,2],'%s' % (str(i)),size=20,zorder=1,
-                color='k')
-
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    pyplot.show()
